@@ -908,7 +908,7 @@
         <button type="submit" class="btn-add">+ Thêm món</button>
       </form>
       <div class="est-row">
-        <button type="button" class="btn-est" id="btnEstimate" style="display:none" hidden>✨ Ước tính calo bằng AI</button>
+        <button type="button" class="btn-est" id="btnEstimate" style="display:none">✨ Ước tính calo bằng AI</button>
         <div class="est-note" id="estNote"></div>
       </div>
       <div class="hist-note">Món chị tự thêm sẽ được lưu thành nút ⭐ ở trên để lần sau chạm là thêm (bấm × trên nút để bỏ).</div>
@@ -1126,6 +1126,7 @@
       const SUPABASE_URL = "https://ckcncdgllkszjiddntzv.supabase.co";
       const SUPABASE_KEY = "sb_publishable_mt7dj9oq8Mrn7FXuHUvGDw_E9Ij4dYH";
       const TABLE = "calo_data";
+      const AI_FUNCTION = "uoc-tinh-calo";
 
       let sb = null, cloudReady = false, pendingWrites = 0, loadingCloud = false;
       const writeTimers = {};
@@ -1248,6 +1249,8 @@
         sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
           auth: { persistSession: false }
         });
+        // Bật nút AI ước tính (gọi hàm "uoc-tinh-calo" trên Supabase)
+        document.getElementById("btnEstimate").style.display = "";
         await loadCloud();
       }
 
@@ -1748,7 +1751,7 @@
           nameInput.focus();
           return;
         }
-        if (!sampleFn) return;
+        if (!sampleFn && !sb) return;
 
         btnEstimate.disabled = true;
         btnEstimate.textContent = "Đang tính…";
@@ -1767,7 +1770,16 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
 
         try {
           let result;
-          if (typeof sampleFn.json === "function") {
+          if (!sampleFn) {
+            // Bản GitHub: hỏi AI qua hàm Edge Function trên Supabase
+            const { data, error } = await sb.functions.invoke(AI_FUNCTION, { body: { food: name } });
+            if (error) {
+              let status = 0;
+              try { status = error.context && error.context.status; } catch (e) {}
+              throw { code: status === 429 ? "rate_limited" : (status === 404 ? "no_function" : "ai_error") };
+            }
+            result = data;
+          } else if (typeof sampleFn.json === "function") {
             result = await sampleFn.json(prompt, { modelTier: "quick" });
           } else {
             const r = await sampleFn(prompt, { modelTier: "quick" });
@@ -1802,7 +1814,9 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
           estNote.appendChild(small);
         } catch (err) {
           const code = err && err.code;
-          if (code === "not_granted") {
+          if (code === "no_function") {
+            estNote.textContent = "Chưa có hàm AI \"uoc-tinh-calo\" trên Supabase. Chị làm theo hướng dẫn tạo hàm nhé, tạm thời nhập calo bằng tay.";
+          } else if (code === "not_granted") {
             btnEstimate.style.display = "none";
             estNote.textContent = "Chưa bật được tính năng AI ước tính. Chị nhập calo bằng tay giúp mình nhé.";
           } else if (code === "rate_limited") {
