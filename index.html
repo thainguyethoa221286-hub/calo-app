@@ -698,6 +698,107 @@
     .w-diff-up { color: var(--danger); font-weight: 600; }
     #weightChart svg { width: 100%; height: auto; display: block; margin-bottom: 8px; }
 
+    /* ===== Giao diện v4: thẻ có màu nền + thanh tiêu đề ===== */
+    body { background: #e9efec; }
+    .card { padding: 0 16px 18px; overflow: hidden; border: 1px solid rgba(0,0,0,0.04); }
+    .card-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin: 0 -16px 14px; padding: 13px 16px;
+      background: var(--tint, #eef4f0); color: var(--tint-text, #2c3a35);
+      font-weight: 700; font-size: 1rem;
+    }
+    .head-meta { font-size: 0.8rem; font-weight: 600; opacity: 0.75; }
+    .c-dash   { --tint: #dcefe5; --tint-text: #23573f; background: #fbfdfc; }
+    .c-add    { --tint: #fbe8cf; --tint-text: #7a4b12; background: #fffcf7; }
+    .c-log    { --tint: #dce9f6; --tint-text: #234a6e; background: #fbfdff; }
+    .c-weight { --tint: #e6e1f5; --tint-text: #4a3d7a; background: #fdfcff; }
+    .c-hist   { --tint: #f5dfe4; --tint-text: #7a3346; background: #fffbfc; }
+
+    /* Panels (Hồ sơ / Mục tiêu) */
+    .panel {
+      background: #fff; border: 1px solid #d7e8df; border-radius: 14px;
+      padding: 12px; margin-bottom: 12px;
+    }
+    .panel-goal { border-color: #cfe3d8; background: #f4faf7; }
+    .panel-head {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.86rem; font-weight: 700; margin-bottom: 10px; color: #2c3a35;
+    }
+    .edit-pill {
+      background: #fff; border: 1px solid #bcd9c9; border-radius: 999px;
+      padding: 5px 12px; font-size: 0.8rem; color: var(--primary); font-weight: 700; cursor: pointer;
+    }
+    .pf-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .pf-tile {
+      background: #f3f8f5; border-radius: 10px; padding: 8px 6px; text-align: center;
+    }
+    .t-label { font-size: 0.72rem; color: var(--text-muted); }
+    .t-val { font-size: 1.15rem; font-weight: 800; line-height: 1.25; }
+    .t-unit { font-size: 0.68rem; color: var(--text-muted); }
+    .goal-row { display: flex; gap: 8px; }
+    .goal-row .field-select { flex: 1; }
+    .goal-row .custom-target { flex: 0 0 110px; }
+    .field-select {
+      width: 100%; padding: 11px 12px; border: 1px solid #cfdcd5; border-radius: 10px;
+      background: #fff; color: var(--text-main); font-size: 0.95rem; font-weight: 600;
+      appearance: auto;
+    }
+    .field-select:focus { outline: 2px solid rgba(76,140,116,0.35); border-color: var(--primary); }
+
+    /* Thêm món */
+    .meal-tab { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px; }
+    .mt-ico { font-size: 1.15rem; line-height: 1; }
+    .sub-block {
+      background: #fff; border: 1px solid #f0dfc6; border-radius: 14px; padding: 12px; margin-bottom: 12px;
+    }
+    .sub-block:last-child { margin-bottom: 0; }
+    .sub-title { font-size: 0.86rem; font-weight: 700; margin-bottom: 8px; color: #7a4b12; }
+    .pick-row { display: flex; gap: 8px; margin-top: 8px; align-items: stretch; }
+    .pick-row .btn-add { flex: 1; height: auto; }
+    .qty-stepper { display: flex; align-items: center; border: 1px solid #cfdcd5; border-radius: 10px; overflow: hidden; background: #fff; }
+    .qty-stepper .qty-btn { border: none; border-radius: 0; width: 36px; height: 42px; font-size: 1.1rem; background: #f6f8f7; }
+    .qty-stepper input { width: 46px; border: none; text-align: center; font-size: 0.95rem; font-weight: 700; outline: none; -moz-appearance: textfield; }
+    .qty-stepper input::-webkit-outer-spin-button, .qty-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .pick-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; display: flex; justify-content: space-between; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .pick-meta:empty { display: none; }
+    .link-btn { background: none; border: none; color: #b05252; font-size: 0.78rem; cursor: pointer; padding: 2px 0; text-decoration: underline; }
+
+    /* Nhật ký: bữa thu gọn + món chạm để sửa */
+    .log-tip { font-size: 0.76rem; color: var(--text-muted); margin: -4px 0 10px; }
+    .meal-acc { background: #fff; border: 1px solid #d6e4f1; border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+    .meal-acc summary {
+      list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      padding: 11px 12px; font-weight: 700; font-size: 0.92rem; background: #f2f7fc;
+    }
+    .meal-acc summary::-webkit-details-marker { display: none; }
+    .meal-acc summary .acc-count { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); }
+    .meal-acc summary .acc-cal { margin-left: auto; color: #234a6e; }
+    .meal-acc summary .acc-chev { transition: transform 0.2s; color: var(--text-muted); font-size: 0.8rem; }
+    .meal-acc[open] summary .acc-chev { transform: rotate(180deg); }
+    .log-row { border-top: 1px solid #edf2f7; }
+    .log-main { display: flex; align-items: center; gap: 10px; padding: 11px 12px; cursor: pointer; }
+    .log-main .log-info { flex: 1; min-width: 0; }
+    .log-main .log-name { font-size: 0.92rem; font-weight: 600; }
+    .log-main .log-sub { font-size: 0.76rem; color: var(--text-muted); }
+    .log-main .log-cal { font-weight: 800; font-size: 0.95rem; white-space: nowrap; }
+    .log-main .log-more { color: #9aa9b5; font-size: 0.85rem; }
+    .log-row.editing .log-main { background: #f6f9fc; }
+    .log-edit { display: none; padding: 4px 12px 12px; background: #f6f9fc; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .log-row.editing .log-edit { display: flex; }
+    .log-edit .edit-label { font-size: 0.78rem; color: var(--text-muted); }
+    .btn-remove {
+      margin-left: auto; background: #fff; border: 1px solid #e7c3c3; color: #b04a4a;
+      border-radius: 10px; padding: 9px 14px; font-size: 0.84rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-remove.confirm { background: #d96b6b; color: #fff; border-color: #d96b6b; }
+
+    @media (max-width: 560px) {
+      .card-head { font-size: 0.98rem; }
+      .t-val { font-size: 1.05rem; }
+      .goal-row { flex-direction: column; }
+      .goal-row .custom-target { flex: none; }
+    }
+
     /* Goal */
     .goal-hint {
       flex-basis: 100%;
@@ -867,15 +968,25 @@
     </header>
 
     <!-- Dashboard Card -->
-    <section class="card">
-      <div class="profile-strip">
-        <button type="button" class="profile-btn" id="openProfile" title="Cập nhật cân nặng / hồ sơ">
-          Hồ sơ: <strong id="profileSummary">1m60 • 62,5kg</strong> | TDEE: <strong id="tdeeDisplay">~1.775 kcal</strong>
-          <span class="edit-pill">✏️ Sửa</span>
-        </button>
-        <div class="target-adjust">
-          <label for="goalSelect">Mục tiêu:</label>
-          <select id="goalSelect" class="target-select">
+    <section class="card c-dash">
+      <div class="card-head"><span>📊 Tổng quan hôm nay</span></div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span>👤 Hồ sơ của chị</span>
+          <button type="button" class="edit-pill" id="openProfile" title="Cập nhật cân nặng / hồ sơ">✏️ Sửa</button>
+        </div>
+        <div class="pf-tiles">
+          <div class="pf-tile"><div class="t-label">Chiều cao</div><div class="t-val" id="tHeight">1m60</div></div>
+          <div class="pf-tile"><div class="t-label">Cân nặng</div><div class="t-val" id="tWeight">62,5</div><div class="t-unit">kg</div></div>
+          <div class="pf-tile"><div class="t-label">TDEE</div><div class="t-val" id="tdeeDisplay">1.775</div><div class="t-unit">kcal/ngày</div></div>
+        </div>
+      </div>
+
+      <div class="panel panel-goal">
+        <div class="panel-head"><span>🎯 Mục tiêu giảm cân</span></div>
+        <div class="goal-row">
+          <select id="goalSelect" class="field-select">
             <option value="0.5">Giảm 0,5 kg/tháng</option>
             <option value="1">Giảm 1 kg/tháng</option>
             <option value="1.5">Giảm 1,5 kg/tháng</option>
@@ -884,7 +995,7 @@
             <option value="3">Giảm 3 kg/tháng</option>
             <option value="custom">Tự chọn số calo</option>
           </select>
-          <input type="number" id="customTarget" class="target-select custom-target" min="1000" max="2500" step="50" inputmode="numeric" style="display:none" title="Số calo mỗi ngày" />
+          <input type="number" id="customTarget" class="field-select custom-target" min="1000" max="2500" step="50" inputmode="numeric" style="display:none" placeholder="kcal" title="Số calo mỗi ngày" />
         </div>
         <div class="goal-hint" id="goalHint"></div>
       </div>
@@ -926,59 +1037,68 @@
     </section>
 
     <!-- Input & Preset Food Card -->
-    <section class="card">
-      <div class="section-title">
-        <span>🍽️ Thêm món ăn</span>
-      </div>
+    <section class="card c-add">
+      <div class="card-head"><span>🍽️ Thêm món ăn</span></div>
 
       <div class="meal-tabs" id="mealTabs">
-        <button type="button" class="meal-tab active" data-meal="morning">☀️ Bữa sáng</button>
-        <button type="button" class="meal-tab" data-meal="lunch">🥗 Bữa trưa</button>
-        <button type="button" class="meal-tab" data-meal="dinner">🌙 Bữa tối</button>
-        <button type="button" class="meal-tab" data-meal="snack">🍎 Ăn vặt</button>
+        <button type="button" class="meal-tab active" data-meal="morning"><span class="mt-ico">☀️</span>Sáng</button>
+        <button type="button" class="meal-tab" data-meal="lunch"><span class="mt-ico">🥗</span>Trưa</button>
+        <button type="button" class="meal-tab" data-meal="dinner"><span class="mt-ico">🌙</span>Tối</button>
+        <button type="button" class="meal-tab" data-meal="snack"><span class="mt-ico">🍎</span>Ăn vặt</button>
       </div>
 
-      <div class="quick-label">
-        <span>Chọn nhanh món quen thuộc (chạm để thêm 1 phần):</span>
+      <div class="sub-block">
+        <div class="sub-title">① Chọn món có sẵn</div>
+        <select id="foodPick" class="field-select"></select>
+        <div class="pick-row">
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" id="pickMinus" aria-label="Bớt">−</button>
+            <input type="number" id="pickQty" value="1" min="0.5" max="20" step="0.5" inputmode="decimal" aria-label="Số phần" />
+            <button type="button" class="qty-btn" id="pickPlus" aria-label="Thêm">+</button>
+          </div>
+          <button type="button" class="btn-add" id="btnPickAdd">+ Thêm vào nhật ký</button>
+        </div>
+        <div class="pick-meta" id="pickMeta"></div>
       </div>
-      <div class="chips-grid" id="quickChips"></div>
 
-      <div class="divider"></div>
-
-      <form class="input-form" id="manualForm">
-        <div class="field-group field-name">
-          <label for="foodName">Tên món khác</label>
-          <input type="text" id="foodName" placeholder="Ví dụ: 1 tô bún bò, 2 trứng luộc..." maxlength="100" required />
+      <div class="sub-block">
+        <div class="sub-title">② Hoặc nhập món khác</div>
+        <form class="input-form" id="manualForm">
+          <div class="field-group field-name">
+            <label for="foodName">Tên món</label>
+            <input type="text" id="foodName" placeholder="Ví dụ: 1 tô bún bò, 2 trứng luộc..." maxlength="100" required />
+          </div>
+          <div class="field-group">
+            <label for="foodCalories">Calo / phần</label>
+            <input type="number" id="foodCalories" placeholder="150" min="0" max="5000" inputmode="numeric" required />
+          </div>
+          <div class="field-group">
+            <label for="foodQty">Số phần</label>
+            <input type="number" id="foodQty" value="1" min="0.25" max="20" step="0.25" inputmode="decimal" required />
+          </div>
+          <button type="submit" class="btn-add">+ Thêm món</button>
+        </form>
+        <div class="est-row">
+          <button type="button" class="btn-est" id="btnEstimate" style="display:none">✨ Ước tính calo bằng AI</button>
+          <div class="est-note" id="estNote"></div>
         </div>
-        <div class="field-group">
-          <label for="foodCalories">Calo / phần</label>
-          <input type="number" id="foodCalories" placeholder="150" min="0" max="5000" required />
-        </div>
-        <div class="field-group">
-          <label for="foodQty">Số lượng</label>
-          <input type="number" id="foodQty" value="1" min="0.25" max="20" step="0.25" required />
-        </div>
-        <button type="submit" class="btn-add">+ Thêm món</button>
-      </form>
-      <div class="est-row">
-        <button type="button" class="btn-est" id="btnEstimate" style="display:none">✨ Ước tính calo bằng AI</button>
-        <div class="est-note" id="estNote"></div>
+        <div class="hist-note">Món chị tự nhập sẽ được lưu vào danh sách ① (mục ⭐ Món của chị) để lần sau chọn nhanh.</div>
       </div>
-      <div class="hist-note">Món chị tự thêm sẽ được lưu thành nút ⭐ ở trên để lần sau chạm là thêm (bấm × trên nút để bỏ).</div>
     </section>
 
     <!-- Daily Log Card -->
-    <section class="card">
-      <div class="section-title">
+    <section class="card c-log">
+      <div class="card-head">
         <span>📋 Nhật ký hôm nay</span>
-        <span style="font-size: 0.82rem; font-weight: 500; color: var(--text-muted);" id="totalItemsCount">0 món</span>
+        <span class="head-meta" id="totalItemsCount">0 món</span>
       </div>
+      <div class="log-tip">Chạm vào một món để chỉnh số phần hoặc xoá.</div>
       <div id="logContainer"></div>
     </section>
 
     <!-- Weight Card -->
-    <section class="card">
-      <div class="section-title">
+    <section class="card c-weight">
+      <div class="card-head">
         <span>⚖️ Cân nặng</span>
         <button type="button" class="btn-est" id="openProfile2" style="padding:6px 12px;font-size:0.8rem;">+ Cập nhật cân</button>
       </div>
@@ -1004,8 +1124,8 @@
     </section>
 
     <!-- History Card -->
-    <section class="card">
-      <div class="section-title">
+    <section class="card c-hist">
+      <div class="card-head">
         <span>📈 Lịch sử &amp; đối chiếu</span>
         <div class="range-tabs" id="rangeTabs">
           <button type="button" data-range="7" class="active">7 ngày</button>
@@ -1417,11 +1537,9 @@
 
       function renderProfile() {
         const p = state.profile;
-        const h = `${Math.floor(p.height / 100)}m${String(p.height % 100).padStart(2, "0")}`;
-        document.getElementById("profileSummary").textContent = `${h} • ${fmtKg(currentKg())}kg`;
-        document.getElementById("tdeeDisplay").textContent = `~${fmt(getTdee())} kcal`;
-        const ht = document.getElementById("histTdee");
-        if (ht) ht.textContent = `~${fmt(getTdee())}`;
+        document.getElementById("tHeight").textContent = `${Math.floor(p.height / 100)}m${String(p.height % 100).padStart(2, "0")}`;
+        document.getElementById("tWeight").textContent = fmtKg(currentKg());
+        document.getElementById("tdeeDisplay").textContent = fmt(getTdee());
       }
 
       function renderWeights() {
@@ -1759,42 +1877,81 @@
       }
 
       // ---------- Chip món gợi ý ----------
-      function renderQuickChips() {
-        const container = document.getElementById("quickChips");
-        const foods = FOOD_DATABASE[state.activeMeal] || [];
-        container.innerHTML = "";
-        foods.forEach(food => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "food-chip" + (food.special ? " coffee-special" : "");
-          btn.innerHTML = `
-            <span>${food.special ? "☕ " : "+ "}${escapeHtml(food.name)}</span>
-            <span class="chip-cal">${food.cal} kcal</span>
-          `;
-          btn.addEventListener("click", () => addFoodItem(state.activeMeal, food.name, food.cal, 1));
-          container.appendChild(btn);
-        });
-
-        // Món của chị tự thêm
-        (state.customFoods[state.activeMeal] || []).forEach(food => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "food-chip custom";
-          btn.innerHTML = `
-            <span>⭐ ${escapeHtml(food.name)}</span>
-            <span class="chip-cal">${fmt(food.cal)} kcal</span>
-            <span class="chip-x" title="Bỏ khỏi danh sách">×</span>
-          `;
-          btn.addEventListener("click", (e) => {
-            if (e.target.closest(".chip-x")) {
-              forgetCustom(state.activeMeal, food.name);
-              return;
-            }
-            addFoodItem(state.activeMeal, food.name, food.cal, 1);
-          });
-          container.appendChild(btn);
-        });
+      function pickList() {
+        const preset = (FOOD_DATABASE[state.activeMeal] || []).map((f, i) => ({ key: "p" + i, name: f.name, cal: f.cal, custom: false }));
+        const mine = (state.customFoods[state.activeMeal] || []).map((f, i) => ({ key: "c" + i, name: f.name, cal: f.cal, custom: true }));
+        return { preset, mine, all: preset.concat(mine) };
       }
+      function renderQuickChips() {
+        const sel = document.getElementById("foodPick");
+        const prev = sel.value;
+        const { preset, mine } = pickList();
+        sel.innerHTML = "";
+        const ph = document.createElement("option");
+        ph.value = "";
+        ph.textContent = `— Chọn món ${MEAL_LABELS[state.activeMeal].replace(/^\S+\s/, "").toLowerCase()} —`;
+        sel.appendChild(ph);
+        const addGroup = (label, items) => {
+          if (!items.length) return;
+          const g = document.createElement("optgroup");
+          g.label = label;
+          items.forEach(f => {
+            const o = document.createElement("option");
+            o.value = f.key;
+            o.textContent = `${f.custom ? "⭐ " : ""}${f.name} · ${fmt(f.cal)} kcal`;
+            g.appendChild(o);
+          });
+          sel.appendChild(g);
+        };
+        addGroup("Món gợi ý", preset);
+        addGroup("⭐ Món của chị", mine);
+        if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
+        renderPickMeta();
+      }
+      function selectedPick() {
+        const key = document.getElementById("foodPick").value;
+        return pickList().all.find(f => f.key === key) || null;
+      }
+      function renderPickMeta() {
+        const meta = document.getElementById("pickMeta");
+        const f = selectedPick();
+        meta.innerHTML = "";
+        if (!f) return;
+        const qty = Number(document.getElementById("pickQty").value) || 1;
+        const info = document.createElement("span");
+        info.innerHTML = `${escapeHtml(f.name)}: <strong>${fmt(f.cal)} kcal/phần</strong>${qty !== 1 ? ` × ${String(qty).replace(".", ",")} = <strong>${fmt(f.cal * qty)} kcal</strong>` : ""}`;
+        meta.appendChild(info);
+        if (f.custom) {
+          const del = document.createElement("button");
+          del.type = "button";
+          del.className = "link-btn";
+          del.textContent = "Bỏ khỏi danh sách ⭐";
+          del.addEventListener("click", () => {
+            forgetCustom(state.activeMeal, f.name);
+            document.getElementById("foodPick").value = "";
+            renderPickMeta();
+          });
+          meta.appendChild(del);
+        }
+      }
+
+      // Chọn món từ danh sách xổ xuống
+      (function initPicker() {
+        const qty = document.getElementById("pickQty");
+        const clampQty = v => Math.min(20, Math.max(0.5, Math.round(v * 2) / 2));
+        document.getElementById("foodPick").addEventListener("change", renderPickMeta);
+        qty.addEventListener("input", renderPickMeta);
+        document.getElementById("pickMinus").addEventListener("click", () => { qty.value = clampQty((Number(qty.value) || 1) - 0.5); renderPickMeta(); });
+        document.getElementById("pickPlus").addEventListener("click", () => { qty.value = clampQty((Number(qty.value) || 1) + 0.5); renderPickMeta(); });
+        document.getElementById("btnPickAdd").addEventListener("click", () => {
+          const f = selectedPick();
+          if (!f) { showToast("Chị chọn món trong danh sách trước nha"); document.getElementById("foodPick").focus(); return; }
+          addFoodItem(state.activeMeal, f.name, f.cal, clampQty(Number(qty.value) || 1));
+          document.getElementById("foodPick").value = "";
+          qty.value = "1";
+          renderPickMeta();
+        });
+      })();
 
       // ---------- Món tự thêm ----------
       function cleanCustom(obj) {
@@ -1943,6 +2100,10 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
       btnEstimate.addEventListener("click", estimateCalories);
 
       // ---------- Nhật ký hôm nay ----------
+      const closedMeals = new Set();
+      let editingId = null;
+      let confirmTimer = null;
+
       function renderLogs() {
         const container = document.getElementById("logContainer");
         document.getElementById("totalItemsCount").textContent = `${state.logs.length} món`;
@@ -1950,7 +2111,7 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
         if (state.logs.length === 0) {
           container.innerHTML = `
             <div class="empty-log">
-              Chưa có món nào hôm nay. Chị hãy chọn bữa ăn ở trên và bấm vào món quen thuộc nhé!
+              Chưa có món nào hôm nay. Chị chọn bữa ăn ở trên rồi chọn món trong danh sách nhé!
             </div>`;
           return;
         }
@@ -1962,62 +2123,86 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
           const items = state.logs.filter(item => item.meal === mealKey);
           if (items.length === 0) return;
 
-          const group = document.createElement("div");
-          group.className = "meal-group";
-          group.innerHTML = `
-            <div class="meal-group-header">
+          const acc = document.createElement("details");
+          acc.className = "meal-acc";
+          acc.open = !closedMeals.has(mealKey);
+          acc.addEventListener("toggle", () => {
+            if (acc.open) closedMeals.delete(mealKey); else closedMeals.add(mealKey);
+          });
+          acc.innerHTML = `
+            <summary>
               <span>${MEAL_LABELS[mealKey]}</span>
-              <span class="meal-group-cal">${fmt(mealSums[mealKey])} kcal</span>
-            </div>`;
+              <span class="acc-count">${items.length} món</span>
+              <span class="acc-cal">${fmt(mealSums[mealKey])} kcal</span>
+              <span class="acc-chev">▼</span>
+            </summary>`;
 
           items.forEach(item => {
             const row = document.createElement("div");
-            row.className = "log-item";
+            row.className = "log-row" + (editingId === item.id ? " editing" : "");
 
-            const info = document.createElement("div");
-            info.className = "log-info";
-            info.innerHTML = `
-              <div class="log-name">${escapeHtml(item.name)}</div>
-              <div class="log-sub">${fmt(item.calPerUnit)} kcal / phần</div>`;
+            const main = document.createElement("div");
+            main.className = "log-main";
+            const qtyTxt = String(item.qty).replace(".", ",");
+            main.innerHTML = `
+              <div class="log-info">
+                <div class="log-name">${escapeHtml(item.name)}</div>
+                <div class="log-sub">${qtyTxt} phần × ${fmt(item.calPerUnit)} kcal</div>
+              </div>
+              <span class="log-cal">${fmt(item.calPerUnit * item.qty)} kcal</span>
+              <span class="log-more">${editingId === item.id ? "▲" : "✎"}</span>`;
+            main.addEventListener("click", () => {
+              editingId = editingId === item.id ? null : item.id;
+              renderLogs();
+            });
 
-            const actions = document.createElement("div");
-            actions.className = "log-actions";
+            const edit = document.createElement("div");
+            edit.className = "log-edit";
+            const lbl = document.createElement("span");
+            lbl.className = "edit-label";
+            lbl.textContent = "Số phần:";
+            const stepper = document.createElement("div");
+            stepper.className = "qty-stepper";
+            const minus = document.createElement("button");
+            minus.type = "button"; minus.className = "qty-btn"; minus.textContent = "−";
+            minus.addEventListener("click", () => {
+              if (item.qty <= 0.5) { showToast("Muốn bỏ món thì chị bấm nút Xoá nhé"); return; }
+              updateQty(item.id, -0.5);
+            });
+            const q = document.createElement("input");
+            q.type = "number"; q.value = item.qty; q.readOnly = true; q.setAttribute("aria-label", "Số phần");
+            const plus = document.createElement("button");
+            plus.type = "button"; plus.className = "qty-btn"; plus.textContent = "+";
+            plus.addEventListener("click", () => updateQty(item.id, 0.5));
+            stepper.append(minus, q, plus);
 
-            const btnMinus = document.createElement("button");
-            btnMinus.type = "button";
-            btnMinus.className = "qty-btn";
-            btnMinus.textContent = "−";
-            btnMinus.title = "Giảm khẩu phần";
-            btnMinus.addEventListener("click", () => updateQty(item.id, -0.5));
+            const del = document.createElement("button");
+            del.type = "button";
+            del.className = "btn-remove";
+            del.textContent = "🗑 Xoá món";
+            del.addEventListener("click", () => {
+              if (!del.classList.contains("confirm")) {
+                del.classList.add("confirm");
+                del.textContent = "Chạm lần nữa để xoá";
+                clearTimeout(confirmTimer);
+                confirmTimer = setTimeout(() => {
+                  del.classList.remove("confirm");
+                  del.textContent = "🗑 Xoá món";
+                }, 3000);
+                return;
+              }
+              clearTimeout(confirmTimer);
+              editingId = null;
+              removeItem(item.id);
+              showToast(`Đã xoá: ${item.name}`);
+            });
 
-            const qtySpan = document.createElement("span");
-            qtySpan.className = "qty-text";
-            qtySpan.textContent = String(item.qty).replace(".", ",");
-
-            const btnPlus = document.createElement("button");
-            btnPlus.type = "button";
-            btnPlus.className = "qty-btn";
-            btnPlus.textContent = "+";
-            btnPlus.title = "Tăng khẩu phần";
-            btnPlus.addEventListener("click", () => updateQty(item.id, 0.5));
-
-            const calTotal = document.createElement("span");
-            calTotal.className = "log-cal-total";
-            calTotal.textContent = `${fmt(item.calPerUnit * item.qty)} kcal`;
-
-            const btnDel = document.createElement("button");
-            btnDel.type = "button";
-            btnDel.className = "btn-del";
-            btnDel.innerHTML = "&times;";
-            btnDel.title = "Xóa món này";
-            btnDel.addEventListener("click", () => removeItem(item.id));
-
-            actions.append(btnMinus, qtySpan, btnPlus, calTotal, btnDel);
-            row.append(info, actions);
-            group.appendChild(row);
+            edit.append(lbl, stepper, del);
+            row.append(main, edit);
+            acc.appendChild(row);
           });
 
-          container.appendChild(group);
+          container.appendChild(acc);
         });
       }
 
