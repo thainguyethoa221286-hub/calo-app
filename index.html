@@ -698,6 +698,49 @@
     .w-diff-up { color: var(--danger); font-weight: 600; }
     #weightChart svg { width: 100%; height: auto; display: block; margin-bottom: 8px; }
 
+    /* Goal */
+    .goal-hint {
+      flex-basis: 100%;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      line-height: 1.45;
+    }
+    .goal-hint:empty { display: none; }
+    .goal-hint .warn-text { color: #a5671b; }
+    .custom-target { width: 92px; }
+
+    /* History v2 */
+    .range-tabs { display: inline-flex; background: var(--bg-soft); border-radius: 999px; padding: 3px; gap: 2px; }
+    .range-tabs button {
+      border: none; background: transparent; padding: 5px 12px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 600; color: var(--text-muted); cursor: pointer;
+    }
+    .range-tabs button.active { background: #fff; color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .cmp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+    .cmp-box { background: #fafcfb; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+    .cmp-box .stat-label { margin-bottom: 2px; }
+    .cmp-box .cmp-val { font-size: 1.15rem; font-weight: 800; }
+    .cmp-box .cmp-sub { font-size: 0.74rem; color: var(--text-muted); }
+    .cmp-box.expect { background: #f3f9f6; border-color: rgba(76,140,116,0.25); }
+    .cmp-box.actual { background: #f5f3fb; border-color: #e1dbf1; }
+    .hist-list-title { font-size: 0.85rem; font-weight: 700; margin: 14px 0 6px; }
+    .hist-list-title span { font-weight: 400; color: var(--text-muted); font-size: 0.76rem; }
+    .hday { border-bottom: 1px dashed var(--border); padding: 8px 2px; cursor: pointer; }
+    .hday:last-child { border-bottom: none; }
+    .hday-top { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; margin-bottom: 5px; }
+    .hday-top .hist-date { min-width: 74px; }
+    .hday-top .hist-val { margin-left: auto; }
+    .badge { font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+    .badge.ok { background: #e5f2ec; color: #2f7a57; }
+    .badge.warn { background: #fdf1dc; color: #9a6216; }
+    .badge.bad { background: #fbe4e4; color: #b24a4a; }
+    .badge.low { background: #fdf1dc; color: #9a6216; }
+    .badge.none, .badge.today { background: #edf1ef; color: var(--text-muted); }
+    .hday-sub { font-size: 0.76rem; margin-top: 4px; }
+    .hday-sub .down { color: var(--safe); font-weight: 600; }
+    .hday-sub .up { color: var(--danger); font-weight: 600; }
+    .hday-detail { margin-top: 6px; background: var(--bg-soft); border-radius: 10px; padding: 8px 10px; font-size: 0.78rem; line-height: 1.6; }
+
     /* AI estimate + custom chips */
     .est-row { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
     .btn-est {
@@ -831,9 +874,19 @@
           <span class="edit-pill">✏️ Sửa</span>
         </button>
         <div class="target-adjust">
-          <label for="targetSelect">Mục tiêu:</label>
-          <select id="targetSelect" class="target-select"></select>
+          <label for="goalSelect">Mục tiêu:</label>
+          <select id="goalSelect" class="target-select">
+            <option value="0.5">Giảm 0,5 kg/tháng</option>
+            <option value="1">Giảm 1 kg/tháng</option>
+            <option value="1.5">Giảm 1,5 kg/tháng</option>
+            <option value="2">Giảm 2 kg/tháng</option>
+            <option value="2.5">Giảm 2,5 kg/tháng</option>
+            <option value="3">Giảm 3 kg/tháng</option>
+            <option value="custom">Tự chọn số calo</option>
+          </select>
+          <input type="number" id="customTarget" class="target-select custom-target" min="1000" max="2500" step="50" inputmode="numeric" style="display:none" title="Số calo mỗi ngày" />
         </div>
+        <div class="goal-hint" id="goalHint"></div>
       </div>
 
       <div class="stats-grid">
@@ -867,7 +920,7 @@
       <div class="feedback-box" id="feedbackBox">
         <span class="feedback-icon" id="feedbackIcon">🌱</span>
         <div id="feedbackText">
-          Chào chị! Mức thâm hụt chuẩn của mình là <strong>1.100 - 1.300 kcal/ngày</strong> để giảm cân an toàn mà vẫn giữ da đẹp, khỏe khoắn ạ.
+          Chào chị! Hôm nay mình cùng giữ đúng mục tiêu calo để giảm cân an toàn nha chị.
         </div>
       </div>
     </section>
@@ -953,12 +1006,17 @@
     <!-- History Card -->
     <section class="card">
       <div class="section-title">
-        <span>📈 7 ngày gần đây</span>
-        <span style="font-size: 0.78rem; font-weight: 500; color: var(--text-muted);">vạch đậm = mục tiêu</span>
+        <span>📈 Lịch sử &amp; đối chiếu</span>
+        <div class="range-tabs" id="rangeTabs">
+          <button type="button" data-range="7" class="active">7 ngày</button>
+          <button type="button" data-range="30">30 ngày</button>
+        </div>
       </div>
-      <div id="historyContainer"></div>
+      <div class="cmp-grid" id="cmpGrid"></div>
       <div class="hist-summary" id="historySummary"></div>
-      <div class="hist-note">Ước tính: thâm hụt ~7.700 kcal ≈ 1 kg mỡ. Tính theo TDEE hiện tại (<span id="histTdee">~1.775</span> kcal), chỉ những ngày có ghi chép.</div>
+      <div class="hist-list-title">Từng ngày <span>(chạm vào một ngày để xem món đã ăn)</span></div>
+      <div id="historyContainer"></div>
+      <div class="hist-note">Cách tính: thâm hụt = TDEE ngày đó − calo đã ăn; ~7.700 kcal thâm hụt ≈ 1 kg mỡ. Chỉ tính những ngày đã xong và có ghi chép (không tính hôm nay). Số dự kiến chỉ là ước lượng; cân thực tế còn lên xuống theo nước trong cơ thể.</div>
     </section>
   </div>
 
@@ -1062,7 +1120,9 @@
         dinner: "🌙 Bữa tối",
         snack: "🍎 Ăn vặt"
       };
-      const VALID_TARGETS = [1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500];
+      const SAFE_MIN = 1200;          // mức ăn tối thiểu an toàn cho nữ
+      const WALK_KCAL_PER_MIN = 4.5;  // đi bộ nhanh, người ~60 kg
+      function isValidTarget(t) { return Number.isFinite(t) && t >= 1000 && t <= 2500; }
 
       // ---------- Ngày theo giờ máy ----------
       function dateKeyOf(d) {
@@ -1088,6 +1148,7 @@
         activeMeal: "morning",
         customFoods: { morning: [], lunch: [], dinner: [], snack: [] },
         profile: { birthYear: 1986, height: 160, activity: 1.4, weights: [] },
+        goal: { kgPerMonth: 2 },
         dateKey: todayKey(),
         logs: []
       };
@@ -1099,15 +1160,16 @@
         try {
           const saved = JSON.parse(localStorage.getItem(LOCAL_KEY) || "null");
           if (saved && typeof saved === "object") {
-            if (VALID_TARGETS.includes(Number(saved.target))) state.target = Number(saved.target);
+            if (isValidTarget(Number(saved.target))) state.target = Number(saved.target);
             state.customFoods = cleanCustom(saved.customFoods);
             state.profile = cleanProfile(saved.profile);
+            if (saved.goal) state.goal = cleanGoal(saved.goal);
             if (saved.days && typeof saved.days === "object") days = saved.days;
           } else {
             // Chuyển dữ liệu từ bản cũ (không có ngày) sang hôm nay
             const old = JSON.parse(localStorage.getItem(OLD_LOCAL_KEY) || "null");
             if (old && Array.isArray(old.logs)) {
-              if (VALID_TARGETS.includes(Number(old.target))) state.target = Number(old.target);
+              if (isValidTarget(Number(old.target))) state.target = Number(old.target);
               days[state.dateKey] = { logs: old.logs, target: state.target };
             }
           }
@@ -1116,8 +1178,8 @@
       function saveLocal() {
         try {
           const keep = {};
-          lastNDays(30).forEach(k => { if (days[k]) keep[k] = days[k]; });
-          localStorage.setItem(LOCAL_KEY, JSON.stringify({ target: state.target, customFoods: state.customFoods, profile: state.profile, days: keep }));
+          lastNDays(32).forEach(k => { if (days[k]) keep[k] = days[k]; });
+          localStorage.setItem(LOCAL_KEY, JSON.stringify({ target: state.target, customFoods: state.customFoods, profile: state.profile, goal: state.goal, days: keep }));
         } catch (e) {}
       }
 
@@ -1172,7 +1234,7 @@
       }
       function persistSettings() {
         saveLocal();
-        scheduleWrite("settings", () => ({ target: state.target, customFoods: state.customFoods, profile: state.profile }));
+        scheduleWrite("settings", () => ({ target: state.target, customFoods: state.customFoods, profile: state.profile, goal: state.goal }));
       }
 
       function cleanLogs(arr) {
@@ -1191,7 +1253,7 @@
         if (!sb || loadingCloud) return;
         loadingCloud = true;
         try {
-          const since = lastNDays(30)[29];
+          const since = lastNDays(32)[31];
           // Lấy "settings" + các ngày trong 30 ngày gần nhất ("settings" > "day-..." theo thứ tự chữ cái)
           const { data: rows, error } = await sb.from(TABLE).select("key,data").gte("key", "day-" + since);
           if (error) throw error;
@@ -1202,7 +1264,9 @@
           if (settingsRow && settingsRow.data) {
             const sd = settingsRow.data;
             const t = Number(sd.target);
-            if (VALID_TARGETS.includes(t)) state.target = t;
+            if (isValidTarget(t)) state.target = t;
+            if (sd.goal) state.goal = cleanGoal(sd.goal);
+            recomputeTarget();
             if (sd.customFoods) state.customFoods = cleanCustom(sd.customFoods);
             if (sd.profile) state.profile = cleanProfile(sd.profile);
           } else if (firstLoad) {
@@ -1217,7 +1281,7 @@
             cloudKeys.add(d.date);
             days[d.date] = {
               logs: cleanLogs(d.logs),
-              target: VALID_TARGETS.includes(Number(d.target)) ? Number(d.target) : state.target
+              target: isValidTarget(Number(d.target)) ? Number(d.target) : state.target
             };
           });
           if (firstLoad) {
@@ -1303,16 +1367,52 @@
         return `${d}/${m}/${y.slice(2)}`;
       }
 
-      function renderTargetOptions() {
-        const sel = document.getElementById("targetSelect");
-        if (sel.options.length === VALID_TARGETS.length) return;
-        sel.innerHTML = "";
-        VALID_TARGETS.forEach(v => {
-          const o = document.createElement("option");
-          o.value = String(v);
-          o.textContent = `${fmt(v)} kcal`;
-          sel.appendChild(o);
-        });
+      function renderTargetOptions() { /* giữ tên cũ cho tương thích */ }
+
+      // ---------- Mục tiêu theo kg/tháng ----------
+      function cleanGoal(g) {
+        if (g && g.kgPerMonth === null) return { kgPerMonth: null };
+        const k = Number(g && g.kgPerMonth);
+        return { kgPerMonth: [0.5, 1, 1.5, 2, 2.5, 3].includes(k) ? k : 2 };
+      }
+      function goalPlan(tdee, kgPerMonth) {
+        const deficit = (kgPerMonth * KCAL_PER_KG) / 30;
+        const raw = tdee - deficit;
+        const target = Math.max(SAFE_MIN, Math.round(raw / 10) * 10);
+        const extra = Math.max(0, Math.round((SAFE_MIN - raw) / 10) * 10);
+        const walkMin = extra > 0 ? Math.max(10, Math.round(extra / WALK_KCAL_PER_MIN / 5) * 5) : 0;
+        return { deficit: Math.round(deficit), raw: Math.round(raw), target, extra, walkMin };
+      }
+      function recomputeTarget() {
+        if (state.goal && state.goal.kgPerMonth) {
+          state.target = goalPlan(getTdee(), state.goal.kgPerMonth).target;
+        }
+      }
+      function kgStr(n) { return String(n).replace(".", ","); }
+      function renderGoal() {
+        const sel = document.getElementById("goalSelect");
+        const inp = document.getElementById("customTarget");
+        const hint = document.getElementById("goalHint");
+        const tdee = getTdee();
+        const k = state.goal.kgPerMonth;
+        if (k) {
+          sel.value = String(k);
+          inp.style.display = "none";
+          const p = goalPlan(tdee, k);
+          if (p.extra > 0) {
+            hint.innerHTML = `→ Ăn <strong>${fmt(p.target)} kcal/ngày</strong> + vận động thêm <strong>~${fmt(p.extra)} kcal</strong> (≈ ${p.walkMin} phút đi bộ nhanh).<br>
+              <span class="warn-text">⚠️ Giảm ${kgStr(k)} kg/tháng nếu chỉ nhờ ăn thì phải ăn ~${fmt(p.raw)} kcal, thấp hơn mức an toàn ${fmt(SAFE_MIN)} kcal, nên app giữ ${fmt(SAFE_MIN)} kcal và bù bằng vận động.</span>`;
+          } else {
+            hint.innerHTML = `→ Ăn <strong>${fmt(p.target)} kcal/ngày</strong> (thâm hụt ~${fmt(p.deficit)} kcal/ngày so với TDEE ${fmt(tdee)} kcal).`;
+          }
+        } else {
+          sel.value = "custom";
+          inp.style.display = "";
+          if (document.activeElement !== inp) inp.value = state.target;
+          const perMonth = Math.max(0, ((tdee - state.target) * 30) / KCAL_PER_KG);
+          hint.innerHTML = `→ Ăn <strong>${fmt(state.target)} kcal/ngày</strong>: dự kiến giảm ~<strong>${perMonth.toFixed(1).replace(".", ",")} kg/tháng</strong>.` +
+            (state.target < SAFE_MIN ? `<br><span class="warn-text">⚠️ Thấp hơn mức an toàn ${fmt(SAFE_MIN)} kcal, không nên duy trì lâu chị nhé.</span>` : "");
+        }
       }
 
       function renderProfile() {
@@ -1430,13 +1530,15 @@
           return;
         }
         const r = calcTdee(f.kg, f.height, f.birthYear, f.activity);
-        const sug = suggestTarget(r.tdee);
+        const k = state.goal.kgPerMonth;
+        const sug = k ? goalPlan(r.tdee, k).target : suggestTarget(r.tdee);
         const age = new Date().getFullYear() - f.birthYear;
         const bmi = f.kg / Math.pow(f.height / 100, 2);
         pf.preview.innerHTML = `
           ${age} tuổi · BMI <strong>${bmi.toFixed(1).replace(".", ",")}</strong><br>
           Chuyển hoá cơ bản ~<strong>${fmt(r.bmr)}</strong> kcal · TDEE ~<strong>${fmt(r.tdee)}</strong> kcal<br>
-          Mục tiêu gợi ý (thâm hụt ~500): <strong>${fmt(sug)} kcal/ngày</strong>`;
+          ${k ? `Theo mục tiêu giảm ${kgStr(k)} kg/tháng → ăn <strong>${fmt(sug)} kcal/ngày</strong>` : `Mức gợi ý (thâm hụt ~500): <strong>${fmt(sug)} kcal/ngày</strong>`}`;
+        pf.apply.parentElement.style.display = k ? "none" : "";
         pf.applyLabel.textContent = sug === state.target
           ? `Mục tiêu hiện tại (${fmt(state.target)} kcal) đã khớp mức gợi ý`
           : `Đổi mục tiêu từ ${fmt(state.target)} → ${fmt(sug)} kcal`;
@@ -1480,7 +1582,9 @@
           p.weights.sort((a, b) => a.date.localeCompare(b.date));
         }
 
-        if (pf.apply.checked) {
+        if (state.goal.kgPerMonth) {
+          recomputeTarget();
+        } else if (pf.apply.checked) {
           state.target = suggestTarget(getTdee());
         }
         persistSettings();
@@ -1553,7 +1657,7 @@
           return {
             type: "safe",
             icon: "🌱",
-            text: "Chào chị! Hôm nay mình cùng giữ mức <strong>1.100 - 1.300 kcal</strong> để giảm cân an toàn và nhẹ bụng nha chị."
+            text: `Chào chị! Hôm nay mình cùng giữ mức <strong>${fmt(target)} kcal</strong> để giảm cân an toàn và nhẹ bụng nha chị.`
           };
         }
 
@@ -1621,7 +1725,7 @@
         const percent = Math.round((total / target) * 100);
         const barWidth = Math.min(percent, 100);
 
-        document.getElementById("targetSelect").value = String(target);
+        renderGoal();
         document.getElementById("displayTarget").textContent = fmt(target);
         document.getElementById("displayConsumed").textContent = fmt(total);
 
@@ -1754,7 +1858,7 @@
         if (!sampleFn && !sb) return;
 
         btnEstimate.disabled = true;
-        btnEstimate.textContent = "Đang tính…";
+        btnEstimate.textContent = "Đang tính… (vài giây)";
         estNote.textContent = "";
 
         const prompt =
@@ -1772,7 +1876,12 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
           let result;
           if (!sampleFn) {
             // Bản GitHub: hỏi AI qua hàm Edge Function trên Supabase
-            const { data, error } = await sb.functions.invoke(AI_FUNCTION, { body: { food: name } });
+            const timeoutMs = 40000;
+            const { data, error } = await Promise.race([
+              sb.functions.invoke(AI_FUNCTION, { body: { food: name } }),
+              new Promise(res => setTimeout(() => res({ data: null, error: { timeout: true } }), timeoutMs))
+            ]);
+            if (error && error.timeout) throw { code: "slow" };
             if (error) {
               let status = 0;
               try { status = error.context && error.context.status; } catch (e) {}
@@ -1814,7 +1923,9 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
           estNote.appendChild(small);
         } catch (err) {
           const code = err && err.code;
-          if (code === "no_function") {
+          if (code === "slow") {
+            estNote.textContent = "AI đang phản hồi chậm, chị thử bấm lại hoặc nhập calo bằng tay nhé.";
+          } else if (code === "no_function") {
             estNote.textContent = "Chưa có hàm AI \"uoc-tinh-calo\" trên Supabase. Chị làm theo hướng dẫn tạo hàm nhé, tạm thời nhập calo bằng tay.";
           } else if (code === "not_granted") {
             btnEstimate.style.display = "none";
@@ -1910,61 +2021,182 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
         });
       }
 
-      // ---------- Lịch sử 7 ngày ----------
+      // ---------- Lịch sử & đối chiếu ----------
+      let histRange = 7;
+      const openDays = new Set();
+
+      function weightAtOrBefore(dateKey) {
+        const ws = state.profile.weights;
+        let found = null;
+        ws.forEach(w => { if (w.date <= dateKey) found = w; });
+        return found;
+      }
+      function tdeeForDate(dateKey) {
+        const p = state.profile;
+        const w = weightAtOrBefore(dateKey) || p.weights[0];
+        const kg = w ? w.kg : DEFAULT_KG;
+        return calcTdee(kg, p.height, p.birthYear, p.activity).tdee;
+      }
+      function kgSigned(kg) {
+        const v = Math.abs(kg).toLocaleString("vi-VN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return (kg < 0 ? "−" : "+") + v;
+      }
+      function dayLabel(k, isToday) {
+        if (isToday) return "Hôm nay";
+        const [y, m, dd] = k.split("-");
+        const wd = new Date(Number(y), Number(m) - 1, Number(dd)).toLocaleDateString("vi-VN", { weekday: "short" });
+        return `${wd} ${dd}/${m}`;
+      }
+
       function renderHistory() {
         days[state.dateKey] = { logs: state.logs, target: state.target };
-        const keys = lastNDays(7);
-        const maxScale = 1900;
+        const keys = lastNDays(histRange + 1); // hôm nay + N ngày trước
         const container = document.getElementById("historyContainer");
         container.innerHTML = "";
+        const maxScale = 2000;
 
-        let loggedDays = 0, totalDeficit = 0, totalEaten = 0;
+        let logged = 0, met = 0, over = 0, surplus = 0, totalEaten = 0, totalDeficit = 0;
 
         keys.forEach((k, idx) => {
+          const isToday = idx === 0;
           const d = days[k];
-          const eaten = d ? sumLogs(d.logs) : 0;
-          const target = d ? d.target : state.target;
-          const has = d && d.logs && d.logs.length > 0;
+          const has = !!(d && d.logs && d.logs.length);
+          const eaten = has ? sumLogs(d.logs) : 0;
+          const target = d && isValidTarget(Number(d.target)) ? Number(d.target) : state.target;
+          const tdee = tdeeForDate(k);
+          const deficit = tdee - eaten;
 
-          // Hôm nay chưa xong nên không tính vào thâm hụt tuần
-          if (has && idx > 0) {
-            loggedDays++;
+          if (has && !isToday) {
+            logged++;
             totalEaten += eaten;
-            totalDeficit += getTdee() - eaten;
+            totalDeficit += deficit;
+            if (eaten <= target) met++;
+            else if (eaten <= tdee) over++;
+            else surplus++;
           }
 
-          const [y, m, dd] = k.split("-");
-          const dateObj = new Date(Number(y), Number(m) - 1, Number(dd));
-          const wd = idx === 0 ? "Hôm nay" : dateObj.toLocaleDateString("vi-VN", { weekday: "short" });
-          const label = idx === 0 ? "Hôm nay" : `${wd} ${dd}/${m}`;
+          // Nhãn trạng thái
+          let badge;
+          if (!has) badge = `<span class="badge none">Chưa ghi</span>`;
+          else if (isToday) badge = `<span class="badge today">Đang ghi</span>`;
+          else if (eaten > tdee) badge = `<span class="badge bad">🔴 Dư calo</span>`;
+          else if (eaten > target) badge = `<span class="badge warn">⚠️ Vượt mục tiêu +${fmt(eaten - target)}</span>`;
+          else if (eaten < 900) badge = `<span class="badge low">⚠️ Ăn quá ít</span>`;
+          else badge = `<span class="badge ok">✅ Đạt</span>`;
 
           let color = "var(--safe)";
-          if (eaten > target) color = "var(--danger)";
-          else if (eaten >= target * 0.85) color = "var(--warn)";
+          if (eaten > tdee) color = "var(--danger)";
+          else if (eaten > target) color = "var(--warn)";
+
+          let sub = "";
+          if (has) {
+            const kg = -deficit / KCAL_PER_KG;
+            sub = deficit >= 0
+              ? `Thâm hụt <span class="down">${fmt(deficit)} kcal</span> ≈ <span class="down">${kgSigned(kg)} kg</span> · mục tiêu ${fmt(target)}${isToday ? " (chưa hết ngày)" : ""}`
+              : `Dư <span class="up">${fmt(-deficit)} kcal</span> ≈ <span class="up">${kgSigned(kg)} kg</span> · mục tiêu ${fmt(target)}`;
+          }
 
           const row = document.createElement("div");
-          row.className = "hist-row";
+          row.className = "hday";
           row.innerHTML = `
-            <span class="hist-date ${idx === 0 ? "today" : ""}">${label}</span>
+            <div class="hday-top">
+              <span class="hist-date ${isToday ? "today" : ""}">${dayLabel(k, isToday)}</span>
+              ${badge}
+              <span class="hist-val ${has ? "" : "empty"}">${has ? fmt(eaten) + " kcal" : "—"}</span>
+            </div>
             <div class="hist-track">
               <div class="hist-fill" style="width:${Math.min(100, (eaten / maxScale) * 100)}%; background:${color};"></div>
-              <div class="hist-target-line" style="left:${(target / maxScale) * 100}%;"></div>
+              <div class="hist-target-line" style="left:${Math.min(100, (target / maxScale) * 100)}%;"></div>
             </div>
-            <span class="hist-val ${has ? "" : "empty"}">${has ? fmt(eaten) : "—"}</span>`;
+            ${sub ? `<div class="hday-sub">${sub}</div>` : ""}`;
+
+          if (has && openDays.has(k)) {
+            const det = document.createElement("div");
+            det.className = "hday-detail";
+            ["morning", "lunch", "dinner", "snack"].forEach(mk => {
+              const items = d.logs.filter(i => i.meal === mk);
+              if (!items.length) return;
+              const line = document.createElement("div");
+              const sum = items.reduce((a, i) => a + i.calPerUnit * i.qty, 0);
+              line.innerHTML = `<strong>${MEAL_LABELS[mk]}</strong> (${fmt(sum)}): ` +
+                items.map(i => `${escapeHtml(i.name)}${i.qty !== 1 ? " ×" + String(i.qty).replace(".", ",") : ""}`).join(", ");
+              det.appendChild(line);
+            });
+            row.appendChild(det);
+          }
+          if (has) {
+            row.addEventListener("click", () => {
+              if (openDays.has(k)) openDays.delete(k); else openDays.add(k);
+              renderHistory();
+            });
+          } else {
+            row.style.cursor = "default";
+          }
           container.appendChild(row);
         });
 
+        // ----- Đối chiếu dự kiến vs thực tế -----
+        const grid = document.getElementById("cmpGrid");
         const summary = document.getElementById("historySummary");
-        if (loggedDays === 0) {
-          summary.innerHTML = "Ghi đủ vài ngày là chị sẽ thấy trung bình calo và mức thâm hụt cả tuần ở đây nhé 🌿";
+        const expectedKg = totalDeficit / KCAL_PER_KG; // dương = giảm
+        const startKey = keys[keys.length - 1];
+
+        const ws = state.profile.weights;
+        let wStart = weightAtOrBefore(startKey);
+        if (!wStart) wStart = ws.find(w => w.date >= startKey) || null;
+        const wEnd = ws.length ? ws[ws.length - 1] : null;
+        const hasActual = wStart && wEnd && wEnd.date > wStart.date;
+        const actualKg = hasActual ? wStart.kg - wEnd.kg : null; // dương = giảm
+
+        const avg = logged ? totalEaten / logged : 0;
+        grid.innerHTML = `
+          <div class="cmp-box">
+            <div class="stat-label">Ngày đạt mục tiêu</div>
+            <div class="cmp-val">${met}/${logged}</div>
+            <div class="cmp-sub">${over ? `${over} ngày vượt nhẹ · ` : ""}${surplus ? `${surplus} ngày dư calo · ` : ""}${histRange - logged} ngày chưa ghi</div>
+          </div>
+          <div class="cmp-box">
+            <div class="stat-label">Calo trung bình</div>
+            <div class="cmp-val">${logged ? fmt(avg) : "—"}</div>
+            <div class="cmp-sub">kcal/ngày · tổng thâm hụt ${fmt(totalDeficit)} kcal</div>
+          </div>
+          <div class="cmp-box expect">
+            <div class="stat-label">Dự kiến giảm (theo calo)</div>
+            <div class="cmp-val">${logged ? fmtKg(expectedKg) + " kg" : "—"}</div>
+            <div class="cmp-sub">${logged} ngày có ghi</div>
+          </div>
+          <div class="cmp-box actual">
+            <div class="stat-label">Thực tế trên cân</div>
+            <div class="cmp-val">${hasActual ? (actualKg >= 0 ? "" : "+") + fmtKg(Math.abs(actualKg)) + " kg" : "—"}</div>
+            <div class="cmp-sub">${hasActual ? `${fmtKg(wStart.kg)} (${shortDate(wStart.date)}) → ${fmtKg(wEnd.kg)} (${shortDate(wEnd.date)})` : "chưa đủ số cân"}</div>
+          </div>`;
+
+        let msg;
+        if (!logged) {
+          msg = `Ghi đủ vài ngày là chị sẽ thấy số kg dự kiến giảm ở đây, rồi so với cân thực tế nhé 🌿`;
+        } else if (!hasActual) {
+          msg = `Theo calo, ${logged} ngày qua chị dự kiến giảm khoảng <strong>${fmtKg(expectedKg)} kg</strong>. Để so với thực tế, chị cân vào đầu kỳ và hôm nay (bấm "+ Cập nhật cân") nhé.`;
         } else {
-          const avg = totalEaten / loggedDays;
-          const kg = Math.max(0, totalDeficit) / KCAL_PER_KG;
-          summary.innerHTML = `
-            ${loggedDays} ngày trước đã ghi: trung bình <strong>${fmt(avg)} kcal/ngày</strong>.<br>
-            Tổng thâm hụt ~<strong>${fmt(totalDeficit)} kcal</strong> ≈ <strong>${kg.toFixed(2).replace(".", ",")} kg</strong> mỡ.`;
+          const diff = actualKg - expectedKg;
+          if (Math.abs(diff) <= 0.3) {
+            msg = `👍 Cân thực tế <strong>khớp</strong> với dự kiến. Chị ghi chép chuẩn lắm!`;
+          } else if (diff > 0) {
+            msg = `Cân thực tế giảm <strong>nhiều hơn</strong> dự kiến ${fmtKg(diff)} kg. Thường là do cơ thể bớt nước (hay gặp ở 1–2 tuần đầu). Rất bình thường chị nhé.`;
+          } else {
+            msg = `Cân thực tế giảm <strong>ít hơn</strong> dự kiến ${fmtKg(-diff)} kg. Có thể do giữ nước (ăn mặn, gần kỳ kinh, mới tập nặng) hoặc có món ghi thiếu, calo ước lượng thấp. Theo dõi thêm 1–2 tuần là rõ chị nhé.`;
+          }
+          if (histRange - logged >= 2) msg += `<br><span style="color:var(--text-muted);font-size:0.78rem">Lưu ý: có ${histRange - logged} ngày chưa ghi nên số dự kiến chưa đầy đủ.</span>`;
         }
+        summary.innerHTML = msg;
       }
+
+      document.getElementById("rangeTabs").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-range]");
+        if (!b) return;
+        histRange = Number(b.dataset.range);
+        document.querySelectorAll("#rangeTabs button").forEach(x => x.classList.toggle("active", x === b));
+        renderHistory();
+      });
 
       // ---------- Thao tác ----------
       function addFoodItem(meal, name, calPerUnit, qty) {
@@ -2032,12 +2264,33 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
         renderQuickChips();
       });
 
-      document.getElementById("targetSelect").addEventListener("change", (e) => {
-        state.target = Number(e.target.value);
+      document.getElementById("goalSelect").addEventListener("change", (e) => {
+        const v = e.target.value;
+        if (v === "custom") {
+          state.goal = { kgPerMonth: null };
+        } else {
+          state.goal = { kgPerMonth: Number(v) };
+          recomputeTarget();
+        }
         persistSettings();
         persistToday();
         renderAll();
-        showToast(`Đã cập nhật mục tiêu: ${fmt(state.target)} kcal`);
+        if (v === "custom") {
+          const inp = document.getElementById("customTarget");
+          inp.focus(); inp.select();
+          showToast("Chị nhập số calo mỗi ngày nhé");
+        } else {
+          showToast(`Mục tiêu giảm ${kgStr(v)} kg/tháng → ${fmt(state.target)} kcal/ngày`);
+        }
+      });
+      document.getElementById("customTarget").addEventListener("change", (e) => {
+        const t = Math.round(Number(e.target.value) / 50) * 50;
+        if (!isValidTarget(t)) { showToast("Chị nhập từ 1.000 đến 2.500 kcal nhé"); renderGoal(); return; }
+        state.target = t;
+        persistSettings();
+        persistToday();
+        renderAll();
+        showToast(`Đã đặt mục tiêu: ${fmt(t)} kcal/ngày`);
       });
 
       document.getElementById("manualForm").addEventListener("submit", (e) => {
@@ -2075,6 +2328,7 @@ Nếu đây không phải đồ ăn hoặc đồ uống, trả về {"kcal": nul
 
       // ---------- Khởi động ----------
       loadLocal();
+      recomputeTarget();
       state.logs = cleanLogs((days[state.dateKey] && days[state.dateKey].logs) || []);
       renderDate();
       renderTargetOptions();
